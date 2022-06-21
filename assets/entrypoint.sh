@@ -35,6 +35,9 @@ if [ "$1" = 'supervisord' ]; then
     vpncmd localhost \
       /CLIENT \
       /CMD NicCreate ${SE_NICNAME} > /dev/null 2>&1
+    vpncmd localhost \
+      /CLIENT \
+      /CMD NicSetSetting ${SE_NICNAME} /MAC:${SE_NICMAC} > /dev/null 2>&1
   fi
 
   # create account
