@@ -1,24 +1,17 @@
-FROM alpine:3.8 as builder
-LABEL maintainer="Antoine Mary <antoinee.mary@gmail.com>" \
-      contributor="Dimitri G. <dev@dmgnx.net>"
+FROM debian:bullseye
 
 ### SET ENVIRONNEMENT
-ENV LANG="en_US.UTF-8"
+ENV LANG="ja_JP.UTF-8"
 
 ### SETUP
-RUN set -ex ; \
-    apk add --no-cache --update --virtual .build-deps \
-      gcc g++ make musl-dev ncurses-dev openssl-dev readline-dev cmake git ; \
-    # Fetch sources
-    git clone https://github.com/SoftEtherVPN/SoftEtherVPN_Stable.git ; \
-    cd SoftEtherVPN_Stable ; \
-    git submodule init && git submodule update ; \
-    # Compile and Install
-    ./configure ; \
-    make ; make install ; make clean ; 
-
-
-FROM alpine:3.8
+RUN apt -y update && apt -y install make gcc libcap-dev libssl-dev libncurses-dev readline-common supervisor && \
+    wget -o sec.tar.gz https://github.com/SoftEtherVPN/SoftEtherVPN_Stable/releases/download/v4.39-9772-beta/softether-vpnclient-v4.39-9772-beta-2022.04.26-linux-x64-64bit.tar.gz && \
+    tar xzvf sec.tar.gz && \
+    cd vpnclient && \
+    make && \
+    cd .. && \
+    mv vpnclient /usr/local && cd /usr/local/vpnclient && \
+    chmod 600 * && chmod 700 vpncmd && chmod 700 vpnclient
 
 # Adjust at runtime
 #ENV SE_SERVER
@@ -35,16 +28,10 @@ COPY assets/entrypoint.sh /entrypoint.sh
 COPY assets/supervisord.conf /etc/
 COPY assets/dhclient-enter-hooks /etc/dhclient-enter-hooks
 
-RUN set -ex ; \
-    apk --update --no-cache add \
-      libcap libcrypto1.0 libssl1.0 ncurses-libs readline supervisor dhclient ; \
-    chmod +x /entrypoint.sh \
-      /etc/dhclient-enter-hooks
+RUN chmod +x /entrypoint.sh /etc/dhclient-enter-hooks
 
-COPY --from=builder /usr/vpnclient /usr/vpnclient
-COPY --from=builder /usr/bin/vpnclient /usr/bin/vpnclient
-COPY --from=builder /usr/vpncmd /usr/vpncmd
-COPY --from=builder /usr/bin/vpncmd /usr/bin/vpncmd
+COPY /usr/local/vpnclient/vpncmd /usr/bin/vpncmd
+COPY /usr/local/vpnclient/vpnclient /usr/bin/vpnclient
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["supervisord", "-c", "/etc/supervisord.conf"]
