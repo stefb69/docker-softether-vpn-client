@@ -22,9 +22,6 @@ if [ "$1" = 'supervisord' ]; then
     exit
   fi
 
-  # rebuild profile from scratch
-  rm -f /usr/vpnclient/vpn_client.config
-
   # start it once on background for configuration
   vpnclient start
 
