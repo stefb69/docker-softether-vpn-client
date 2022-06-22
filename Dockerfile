@@ -6,7 +6,7 @@ ENV LANG="ja_JP.UTF-8"
 ### SETUP
 RUN apt -y update && apt -y install make gcc libcap-dev libssl-dev libncurses-dev readline-common supervisor wget && \
     wget -o sec.tar.gz https://github.com/SoftEtherVPN/SoftEtherVPN_Stable/releases/download/v4.39-9772-beta/softether-vpnclient-v4.39-9772-beta-2022.04.26-linux-x64-64bit.tar.gz && \
-    tar -xvf sec.tar.gz && \
+    tar xvf sec.tar.gz && \
     cd vpnclient && \
     make && \
     cd .. && \
