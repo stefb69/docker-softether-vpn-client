@@ -10,7 +10,8 @@ RUN apt -y update && apt -y install cmake gcc g++ make libncurses5-dev libssl-de
     git submodule init && git submodule update && \
     ./configure && \
     make -C build && \
-    make -C build install
+    make -C build install && \
+    cd .. && rm -rf SoftEtherVPN
 
 # Adjust at runtime
 #ENV SE_SERVER
