@@ -4,16 +4,13 @@ FROM debian:bullseye
 ENV LANG="ja_JP.UTF-8"
 
 ### SETUP
-RUN apt -y update && apt -y install make gcc libcap-dev libssl-dev libncurses-dev readline-common supervisor wget && \
-    wget https://github.com/SoftEtherVPN/SoftEtherVPN_Stable/releases/download/v4.29-9680-rtm/softether-vpnclient-v4.29-9680-rtm-2019.02.28-linux-x64-64bit.tar.gz && \
-    tar xf softether-vpnclient-v4.29-9680-rtm-2019.02.28-linux-x64-64bit.tar.gz && \
-    cd vpnclient && \
-    make && \
-    cd .. && \
-    mv vpnclient /usr/vpnclient && cd /usr/vpnclient && \
-    chmod 600 * && chmod 700 vpncmd && chmod 700 vpnclient && \
-    cp /usr/vpnclient/vpnclient /usr/bin/ && \
-    cp /usr/vpnclient/vpncmd /usr/bin
+RUN apt -y update && apt -y install cmake gcc g++ make libncurses5-dev libssl-dev libsodium-dev libreadline-dev zlib1g-dev supervisor git && \
+    git clone https://github.com/SoftEtherVPN/SoftEtherVPN.git && \
+    cd SoftEtherVPN && \
+    git submodule init && git submodule update && \
+    ./configure && \
+    make -C build && \
+    make -C build install
 
 # Adjust at runtime
 #ENV SE_SERVER
