@@ -10,8 +10,10 @@ RUN apt -y update && apt -y install make gcc libcap-dev libssl-dev libncurses-de
     cd vpnclient && \
     make && \
     cd .. && \
-    mv vpnclient /usr/local && cd /usr/local/vpnclient && \
-    chmod 600 * && chmod 700 vpncmd && chmod 700 vpnclient
+    mv vpnclient /usr/vpnclient && cd /usr/vpnclient && \
+    chmod 600 * && chmod 700 vpncmd && chmod 700 vpnclient && \
+    cp /usr/vpnclient/vpnclient /usr/bin/ && \
+    cp /usr/vpnclient/vpncmd /usr/bin
 
 # Adjust at runtime
 #ENV SE_SERVER
@@ -29,9 +31,6 @@ COPY assets/supervisord.conf /etc/
 COPY assets/dhclient-enter-hooks /etc/dhclient-enter-hooks
 
 RUN chmod +x /entrypoint.sh /etc/dhclient-enter-hooks
-
-COPY /usr/local/vpnclient/vpncmd /usr/bin/vpncmd
-COPY /usr/local/vpnclient/vpnclient /usr/bin/vpnclient
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["supervisord", "-c", "/etc/supervisord.conf"]
