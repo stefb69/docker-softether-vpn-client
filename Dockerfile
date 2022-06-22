@@ -4,7 +4,7 @@ FROM debian:bullseye
 ENV LANG="ja_JP.UTF-8"
 
 ### SETUP
-RUN apt -y update && apt -y install cmake gcc g++ make iputils-ping nano dnsutils libncurses5-dev libssl-dev isc-dhcp-client libsodium-dev pkg-config libreadline-dev zlib1g-dev supervisor git && \
+RUN apt -y update && apt -y install cmake gcc g++ make iputils-ping nano dnsutils curl wget libncurses5-dev libssl-dev isc-dhcp-client libsodium-dev pkg-config libreadline-dev zlib1g-dev supervisor git && \
     git clone https://github.com/SoftEtherVPN/SoftEtherVPN.git && \
     cd SoftEtherVPN && \
     git submodule init && git submodule update && \
