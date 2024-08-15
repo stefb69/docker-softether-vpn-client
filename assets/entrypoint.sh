@@ -15,12 +15,7 @@ if [ "$1" = 'supervisord' ]; then
   if [ -z ${SE_USERNAME+x} ]; then
     echo "Please provide SE_USERNAME environment variable" 2>&1
     exit
-  fi
-  
-  if [ -z ${SE_PASSWORD+x} ]; then
-    echo "Please provide SE_PASSWORD environment variable" 2>&1
-    exit
-  fi
+  fi 
 
   # start it once on background for configuration
   vpnclient start
@@ -47,12 +42,17 @@ if [ "$1" = 'supervisord' ]; then
     /NICNAME:${SE_NICNAME} > /dev/null 2>&1
 
   # set account password
-  vpncmd localhost \
-    /CLIENT \
-    /CMD AccountPasswordSet ${SE_ACCOUNT_NAME} \
-    /PASSWORD:${SE_PASSWORD} \
-    /TYPE:${SE_TYPE} > /dev/null 2>&1
-
+  if [ -z ${SE_PASSWORD+x} ]; then
+    vpncmd localhost \
+      /CLIENT \
+      /CMD AccountPasswordSet ${SE_ACCOUNT_NAME} \
+      /PASSWORD:${SE_PASSWORD} \
+      /TYPE:${SE_TYPE} > /dev/null 2>&1
+  else
+    vpncmd localhost \
+      /CLIENT \
+      /CMD AccountAnonymousSet ${SE_ACCOUNT_NAME} 2>&1
+  fi
   # set account to auto-connect
   vpncmd localhost \
     /CLIENT \
